@@ -37,6 +37,13 @@ class Context(object):
         signature.seek(0)
         mime_app_sign = MIMEApplication(signature.read(), 'pgp-signature',
                                         encoders.encode_7or8bit)
+        mime_app_sign['Content-Description'] = 'Message signed with gpg using pygpgme'
+        mime_app_sign.add_header('Content-Disposition',  'attachment',
+                                 filename='signature.asc')
+        mime_app_sign.add_header('Content-Type', 'application/pgp-signature',
+                                 name='signature.asc')
+
+
         m.attach(mime_app_sign)
         return m
 
