@@ -1,5 +1,6 @@
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
+from email.mime.text import MIMEText
 from email import encoders
 
 import getpass
@@ -46,9 +47,33 @@ class Context(object):
         m.attach(mime_app_sign)
         return m
 
+    def encrypt_sign_mime_message(self, target, message):
+        m = MIMEMultipart('encrypted')
+        m['protocol'] = 'application/pgp-encrypted'
+        m.preamble = 'This is an OpenPGP/MIME encrypted message (RFC 2440 and 3156)'
+        appli = MIMEApplication('Version: 1', 'pgp-encrypted',
+                                encoders.encode_7or8bit)
+        appli['Content-Description'] = 'PGP/MIME Versions Identification'
+        m.attach(appli)
+        plaintext = BytesIO(str(self.sign_mime_message(message)))
+        ciphertext = BytesIO()
+        self.ctx.armor = True
+        recipient = self.ctx.get_key(target)
+        self.ctx.encrypt_sign([recipient], gpgme.ENCRYPT_ALWAYS_TRUST,
+                         plaintext, ciphertext)
+        ciphertext.seek(0)
+        appli_cipher = MIMEApplication(ciphertext.read(), 'octet-stream',
+                                       encoders.encode_7or8bit)
+        appli_cipher.add_header('Content-Disposition', 'inline',
+                                filename='encrypted.asc')
+        appli_cipher.add_header('Content-Type', 'application/octet-stream',
+                                name='encrypted.asc')
+        appli_cipher['Content-Description'] = 'OpenPGP encrypted message'
+        m.attach(appli_cipher)
+        return m
+
 
 if __name__ == '__main__':
-    from email.mime.text import MIMEText
     from sendmail import SMTP
     import sys
     text = u"Hello world"
@@ -56,9 +81,13 @@ if __name__ == '__main__':
     from_ = 'mlecarme@bearstech.com'
     to_ = sys.argv[1]
     context = Context(from_)
-    signed = context.sign_mime_message(part)
+    signed = context.encrypt_sign_mime_message(to_, part)
     signed['From'] = from_
     signed['To'] = to_
     signed['Subject'] = 'GPG test with gpgme'
+    signed['X-Pgp-Agent'] = 'kluczy 0.1'
+    signed['Content-Description'] = 'OpenPGP encrypted message'
+    signed['Content-Transfer-Encoding'] = '7bit'
+    signed['X-Mailer'] = 'Python smtplib'
     with SMTP() as s:
         s.sendmail(from_, to_, signed.as_string())
