@@ -43,15 +43,22 @@ class Context(object):
         mime_app_sign.add_header('Content-Type', 'application/pgp-signature',
                                  name='signature.asc')
 
-
         m.attach(mime_app_sign)
         return m
 
 
 if __name__ == '__main__':
     from email.mime.text import MIMEText
+    from sendmail import SMTP
+    import sys
     text = u"Hello world"
     part = MIMEText(text, 'plain')
-    context = Context('mlecarme@bearstech.com')
+    from_ = 'mlecarme@bearstech.com'
+    to_ = sys.argv[1]
+    context = Context(from_)
     signed = context.sign_mime_message(part)
-    print signed
+    signed['From'] = from_
+    signed['To'] = to_
+    signed['Subject'] = 'GPG test with gpgme'
+    with SMTP() as s:
+        s.sendmail(from_, to_, signed.as_string())

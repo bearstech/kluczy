@@ -34,10 +34,11 @@ class SMTP(object):
         user = self.conf.get('smtp', 'user')
         password = keyring.get_password('kluczy', 'smtp.password')
         self.smtp.login(user, password)
-        return self
+        return self.smtp
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.smtp.quit()
+
 
 if __name__ == "__main__":
     with SMTP() as s:
