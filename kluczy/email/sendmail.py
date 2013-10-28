@@ -25,6 +25,8 @@ class SMTP(object):
     def __init__(self):
         self.conf = SafeConfigParser()
         self.conf.read([expanduser('~/.kluczy.cfg')])
+
+    def __enter__(self):
         self.smtp = smtplib.SMTP_SSL(self.conf.get('smtp', 'host'),
                                      self.conf.get('smtp', 'port'))
         self.smtp.set_debuglevel(1)
@@ -32,10 +34,11 @@ class SMTP(object):
         user = self.conf.get('smtp', 'user')
         password = keyring.get_password('kluczy', 'smtp.password')
         self.smtp.login(user, password)
+        return self
 
-    def quit(self):
+    def __exit__(self, exc_type, exc_value, traceback):
         self.smtp.quit()
 
 if __name__ == "__main__":
-    s = SMTP()
-    s.quit()
+    with SMTP() as s:
+        print s
