@@ -8,7 +8,7 @@ Install
 
 ### Debian and Ubuntu
 
-    apt-get install python-gpgme
+    apt-get install python-gpgme python-keyring
 
 ### OSX
 
