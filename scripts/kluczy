@@ -1,0 +1,42 @@
+#!/usr/bin/env python
+
+"""
+Kluczy RSA management for SSL and GPG
+
+kluczy init
+    Scaffload a simple PKI for handling SSL certificates.
+
+kluczy run
+    Build needed stuffs
+"""
+import sys
+import os.path
+from ConfigParser import SafeConfigParser
+
+if len(sys.argv) == 1:
+    print __doc__
+    sys.exit(0)
+
+if sys.argv[1] == "init":
+    from kluczy import scaffolding
+    scaffolding.main()
+    sys.exit(0)
+
+if sys.argv[1] == "run":
+    if not os.path.exists('config.ini'):
+        print """
+config.ini file is not found.
+Try to boostrap and modify it:
+    kluczy init
+    $EDIT config.ini
+"""
+        sys.exit(1)
+    conf = SafeConfigParser()
+    conf.read('config.ini')
+    from kluczy.ssl.ca import CertificateFactory
+    factory = CertificateFactory(conf)
+    print factory.cacert
+    sys.exit(0)
+
+print __doc__
+sys.exit(1)

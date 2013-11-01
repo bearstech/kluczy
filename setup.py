@@ -11,6 +11,6 @@ setup(
     url='',
     install_requires=[],
     packages=['kluczy'],
-    scripts=['scripts/kl-ca'],
+    scripts=['scripts/kluczy'],
     classifiers=[],
 )
