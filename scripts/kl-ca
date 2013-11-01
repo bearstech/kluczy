@@ -1,0 +1,14 @@
+#!/usr/bin/env python
+
+from kluczy import ssl
+from OpenSSL import crypto
+
+cakey = ssl.createKeyPair()
+with open('CA.pkey', 'w') as private_key:
+    private_key.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, cakey))
+careq = ssl.createCertRequest(cakey, CN='Kluczy Certificate Authority')
+cacert = ssl.createCertificate(careq, (careq, cakey), 0, (0, 60*60*24*365*3))  # three years
+with open('CA.cert', 'w') as certificate:
+    certificate.write(crypto.dump_certificate(crypto.FILETYPE_PEM, cacert))
+
+
