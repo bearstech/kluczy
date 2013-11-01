@@ -8,7 +8,7 @@ Install
 
 ### Debian and Ubuntu
 
-    apt-get install python-gpgme python-keyring
+    apt-get install python-gpgme python-keyring python-openssl
 
 ### OSX
 
@@ -28,3 +28,8 @@ Read the comments and edit the config.ini file
     kluczy run
 
 A Certificate Authority is lazily created
+
+Licence
+-------
+
+Three terms BSD Licence, © Mathieu Lecarme.

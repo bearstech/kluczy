@@ -1,2 +1,3 @@
 pygpgme
 keyring
+pyOpenSSL
