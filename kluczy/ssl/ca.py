@@ -41,9 +41,8 @@ class CertificateFactory(object):
             self._cacert = cacert
         return self._cacert
 
-    def createKeyPair(self, name=None, bits=None):
-        if bits is None:
-            bits = self.conf.getint('SSL', 'key_size')
+    def createKeyPair(self, name=None):
+        bits = self.conf.getint('SSL', 'key_size')
         pkey = ssl.createKeyPair(bits=bits)
         if name is not None:
             with open('%s.pkey' % name, 'w') as private_key:
@@ -65,3 +64,16 @@ class CertificateFactory(object):
                 certificate.write(crypto.dump_certificate(
                     crypto.FILETYPE_PEM, cert))
         return cert
+
+    def buildCertificates(self):
+        template = self.conf.items('Certificate-keys')
+        names = [name.strip() for name in
+                 self.conf.get('Certificates', 'names').split(',')]
+        for name in names:
+            pkey = self.createKeyPair(name)
+            #FIXME check string.format security
+            keys = dict([(k.upper(), v.format(name=name))
+                         for (k, v) in template
+            ])
+            req = self.createCertRequest(pkey, keys)
+            self.createCertificate(req, name)

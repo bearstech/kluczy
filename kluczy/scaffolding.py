@@ -4,6 +4,7 @@ DEFAULT="""
 [SSL]
 key_size=2048
 digest=sha256
+#Three years
 ttl=94608000
 
 [CA]
@@ -20,7 +21,14 @@ O=
 #Organisation Unit
 OU=
 
-[Clients]
+[Certificates]
+names=alice, bob, celia
+
+[Certificate-keys]
+CN={name}.kluczy.org
+C=FR
+L=Paris
+O=Kluczy
 """
 
 def main():

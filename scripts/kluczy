@@ -35,7 +35,7 @@ Try to boostrap and modify it:
     conf.read('config.ini')
     from kluczy.ssl.ca import CertificateFactory
     factory = CertificateFactory(conf)
-    print factory.cacert
+    factory.buildCertificates()
     sys.exit(0)
 
 print __doc__
