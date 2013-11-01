@@ -55,7 +55,7 @@ def createCertRequest(pkey, digest="sha256", **name):
     req.sign(pkey, digest)
     return req
 
-def createCertificate(req, (issuerCert, issuerKey), serial, (notBefore, notAfter), digest="sha"):
+def createCertificate(req, (issuerCert, issuerKey), serial, (notBefore, notAfter), digest="sha256"):
     """
     Generate a certificate given a certificate request.
 
@@ -79,5 +79,3 @@ def createCertificate(req, (issuerCert, issuerKey), serial, (notBefore, notAfter
     cert.set_pubkey(req.get_pubkey())
     cert.sign(issuerKey, digest)
     return cert
-
-
