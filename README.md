@@ -48,6 +48,27 @@ Then, a client :
 
 Both output are verbose, enjoy. What you write client side display server side.
 
+### Secure server with authenticated client
+
+Alice got a server, and verify clients :
+
+    openssl s_server -cert alice.cert -key alice.pkey -CAfile CA.cert -Verify 1
+
+Bob can connect it, they use the same Certificate Authority :
+
+    openssl s_client -connect localhost:4433 -CAfile CA.cert -cert bob.cert -key bob.pkey
+
+Features
+--------
+
+ * √ Declarative certificates generation
+ * √ Sending mail with MIME and GPG
+ * √ Authenticated SMTP using the keyring
+ * _ Handling revocation list
+ * _ Handling pin code for private keys
+ * _ Batch sending certificates with GPG mail
+ * _ Handling DH param
+
 Licence
 -------
 
