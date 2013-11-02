@@ -84,7 +84,6 @@ class CertificateFactory(object):
             pkey = self.createKeyPair(name)
             #FIXME check string.format security
             keys = dict([(k.upper(), v.format(name=name))
-                         for (k, v) in template
-            ])
+                         for (k, v) in template if v is not ""])
             req = self.createCertRequest(pkey, keys)
             self.createCertificate(req, name)
