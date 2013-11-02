@@ -38,6 +38,16 @@ Testing certificates
 Openssl provides tools for testing and debugging SSL.
 Generate some certificates with the default config.ini
 
+### Watch what you done
+
+Alice private key :
+
+    openssl rsa -in alice.key -check
+
+Alice certificate :
+
+    openssl x509 -in alice.crt -text
+
 ### Secure server with an unauthenticated client
 
 First, a server :
@@ -66,10 +76,13 @@ Features
  * √ Declarative certificates generation
  * √ Sending mail with MIME and GPG
  * √ Authenticated SMTP using the keyring
- * _ Handling revocation list
- * _ Handling pin code for private keys
+ * _ Cascading certificate authority and chaining them
+ * _ Revocation list
+ * _ Pin code for private keys
  * _ Batch sending certificates with GPG mail
  * _ Handling DH param
+ * _ RSA, DSA or ECDSA private key
+ * _ PEM or DER output format
 
 Licence
 -------

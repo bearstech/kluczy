@@ -64,7 +64,8 @@ class CertificateFactory(object):
         cert_path = "%s.%s" % (name, CERTIFICATE_EXTENSION)
         if exists(cert_path):  # A certificate without a private key is useless
             unlink(cert_path)
-        pkey = ssl.createKeyPair(bits=bits)
+        #FIXME does it works with DSA?
+        pkey = ssl.createKeyPair(type=crypto.TYPE_RSA, bits=bits)
         open(key_path, 'w').write(crypto.dump_privatekey(crypto.FILETYPE_PEM,
                                                          pkey))
         return pkey
