@@ -3,6 +3,9 @@ from OpenSSL import crypto
 from os.path import exists
 from os import unlink
 
+KEY_EXTENSION = 'key'
+CERTIFICATE_EXTENSION = 'crt'
+
 
 class CertificateFactory(object):
     """
@@ -17,29 +20,36 @@ class CertificateFactory(object):
     @property
     def cakey(self):
         if self._cakey is None:
-            if exists('CA.pkey'):
-                cakey = crypto.load_privatekey(crypto.FILETYPE_PEM,
-                                               open('CA.pkey', 'rb').read())
+            key_name = 'CA.%s' % KEY_EXTENSION
+            if exists(key_name):
+                with open(key_name, 'rb') as kf:
+                    cakey = crypto.load_privatekey(crypto.FILETYPE_PEM,
+                                                   kf.read())
             else:
                 cakey = self.createKeyPair('CA')
+                # FIXME should drop every keys, nobody can live without its CA
             self._cakey = cakey
         return self._cakey
 
     @property
     def cacert(self):
         if self._cacert is None:
-            if exists('CA.cert'):
-                cacert = crypto.load_certificate(crypto.FILETYPE_PEM,
-                                                 open('CA.cert', 'rb').read())
+            ca_name = 'CA.%s' % CERTIFICATE_EXTENSION
+            if exists(ca_name):
+                with open(ca_name, 'rb') as caf:
+                    cacert = crypto.load_certificate(crypto.FILETYPE_PEM,
+                                                     caf.read())
             else:
                 keys = dict([(key.upper(), value) for (key, value) in
                              self.conf.items('CA')])
                 careq = self.createCertRequest(self.cakey, keys)
                 ttl = self.conf.getint('SSL', 'ttl')
                 digest = self.conf.get('SSL', 'digest')
+                #FIXME Handle serial number
+                #FIXME Handle version
                 cacert = ssl.createCertificate(careq, (careq, self.cakey), 0,
                                                (0, ttl), digest)
-                with open('CA.cert', 'w') as certificate:
+                with open(ca_name, 'w') as certificate:
                     certificate.write(crypto.dump_certificate(
                         crypto.FILETYPE_PEM, cacert))
             self._cacert = cacert
@@ -47,11 +57,11 @@ class CertificateFactory(object):
 
     def createKeyPair(self, name):
         bits = self.conf.getint('SSL', 'key_size')
-        key_path = "%s.pkey" % name
+        key_path = "%s.%s" % (name, KEY_EXTENSION)
         if exists(key_path):
             return crypto.load_privatekey(crypto.FILETYPE_PEM,
                                           open(key_path, 'rb').read())
-        cert_path = "%s.cert" % name
+        cert_path = "%s.%s" % (name, CERTIFICATE_EXTENSION)
         if exists(cert_path):  # A certificate without a private key is useless
             unlink(cert_path)
         pkey = ssl.createKeyPair(bits=bits)
@@ -66,7 +76,7 @@ class CertificateFactory(object):
     def createCertificate(self, request, name):
         ttl = self.conf.getint('SSL', 'ttl')
         digest = self.conf.get('SSL', 'digest')
-        cert_path = "%s.cert" % name
+        cert_path = "%s.%s" % (name, CERTIFICATE_EXTENSION)
         if exists(cert_path):
             return crypto.load_certificate(crypto.FILETYPE_PEM,
                                            open(cert_path, 'rb').read())

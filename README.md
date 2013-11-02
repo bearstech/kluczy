@@ -40,11 +40,11 @@ Generate some certificates with the default config.ini
 
 First, a server :
 
-    openssl s_server -cert alice.cert -key alice.pkey
+    openssl s_server -cert alice.crt -key alice.key
 
 Then, a client :
 
-    openssl s_client -connect localhost:4433 -CAfile CA.cert
+    openssl s_client -connect localhost:4433 -CAfile CA.crt
 
 Both output are verbose, enjoy. What you write client side display server side.
 
@@ -52,11 +52,11 @@ Both output are verbose, enjoy. What you write client side display server side.
 
 Alice got a server, and verify clients :
 
-    openssl s_server -cert alice.cert -key alice.pkey -CAfile CA.cert -Verify 1
+    openssl s_server -cert alice.crt -key alice.key -CAfile CA.crt -Verify 1
 
 Bob can connect it, they use the same Certificate Authority :
 
-    openssl s_client -connect localhost:4433 -CAfile CA.cert -cert bob.cert -key bob.pkey
+    openssl s_client -connect localhost:4433 -CAfile CA.crt -cert bob.crt -key bob.key
 
 Features
 --------
