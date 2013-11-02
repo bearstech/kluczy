@@ -1,6 +1,7 @@
 from kluczy import ssl
 from OpenSSL import crypto
 from os.path import exists
+from os import unlink
 
 
 class CertificateFactory(object):
@@ -50,6 +51,9 @@ class CertificateFactory(object):
         if exists(key_path):
             return crypto.load_privatekey(crypto.FILETYPE_PEM,
                                           open(key_path, 'rb').read())
+        cert_path = "%s.cert" % name
+        if exists(cert_path):  # A certificate without a private key is useless
+            unlink(cert_path)
         pkey = ssl.createKeyPair(bits=bits)
         open(key_path, 'w').write(crypto.dump_privatekey(crypto.FILETYPE_PEM,
                                                          pkey))
