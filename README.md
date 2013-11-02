@@ -1,7 +1,7 @@
 Kluczy
 ======
 
-It should mean "key" in polish.
+It means "key" in polish.
 
 Install
 -------
@@ -28,6 +28,25 @@ Read the comments and edit the config.ini file
     kluczy run
 
 A Certificate Authority is lazily created
+
+
+Testing certificates
+--------------------
+
+Openssl provides tools for testing and debugging SSL.
+Generate some certificates with the default config.ini
+
+### Secure server with an unauthenticated client
+
+First, a server :
+
+    openssl s_server -cert alice.cert -key alice.pkey
+
+Then, a client :
+
+    openssl s_client -connect localhost:4433 -CAfile CA.cert
+
+Both output are verbose, enjoy. What you write client side display server side.
 
 Licence
 -------
