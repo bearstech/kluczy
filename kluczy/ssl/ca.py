@@ -21,7 +21,7 @@ class CertificateFactory(object):
                 cakey = crypto.load_privatekey(crypto.FILETYPE_PEM,
                                                open('CA.pkey', 'rb').read())
             else:
-                cakey = self.createKeyPair(name='CA')
+                cakey = self.createKeyPair('CA')
             self._cakey = cakey
         return self._cakey
 
