@@ -18,6 +18,8 @@ Install your own virtualenv and requirements.
 
     env ARCHFLAGS="-arch x86_64" pip install -r requirements.txt
 
+You can read SSL certificate with QuickLook.
+
 Try it
 ------
 
