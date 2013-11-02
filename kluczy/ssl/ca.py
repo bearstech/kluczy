@@ -4,6 +4,9 @@ from os.path import exists
 
 
 class CertificateFactory(object):
+    """
+    Build certificate from a config file.
+    """
 
     def __init__(self, conf):
         self.conf = conf
@@ -41,12 +44,14 @@ class CertificateFactory(object):
             self._cacert = cacert
         return self._cacert
 
-    def createKeyPair(self, name=None):
+    def createKeyPair(self, name):
         bits = self.conf.getint('SSL', 'key_size')
+        key_path = "%s.pkey" % name
+        if exists(key_path):
+            return crypto.load_privatekey(crypto.FILETYPE_PEM,
+                                          open(key_path, 'rb').read())
         pkey = ssl.createKeyPair(bits=bits)
-        if name is not None:
-            with open('%s.pkey' % name, 'w') as private_key:
-                private_key.write(crypto.dump_privatekey(crypto.FILETYPE_PEM,
+        open(key_path, 'w').write(crypto.dump_privatekey(crypto.FILETYPE_PEM,
                                                          pkey))
         return pkey
 
@@ -54,15 +59,17 @@ class CertificateFactory(object):
         digest = self.conf.get('SSL', 'digest')
         return ssl.createCertRequest(pkey, digest=digest, **keys)
 
-    def createCertificate(self, request, name=None):
+    def createCertificate(self, request, name):
         ttl = self.conf.getint('SSL', 'ttl')
         digest = self.conf.get('SSL', 'digest')
+        cert_path = "%s.cert" % name
+        if exists(cert_path):
+            return crypto.load_certificate(crypto.FILETYPE_PEM,
+                                           open(cert_path, 'rb').read())
         cert = ssl.createCertificate(request, (self.cacert, self.cakey), 1,
                                      (0, ttl), digest)
-        if name is not None:
-            with open('%s.cert' % name, 'w') as certificate:
-                certificate.write(crypto.dump_certificate(
-                    crypto.FILETYPE_PEM, cert))
+        open(cert_path, 'w').write(crypto.dump_certificate(crypto.FILETYPE_PEM,
+                                                           cert))
         return cert
 
     def buildCertificates(self):
