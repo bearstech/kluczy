@@ -16,6 +16,7 @@ from OpenSSL import crypto
 TYPE_RSA = crypto.TYPE_RSA
 TYPE_DSA = crypto.TYPE_DSA
 
+
 def createKeyPair(type=TYPE_RSA, bits=2048):
     """
     Create a public/private key pair.
@@ -27,6 +28,7 @@ def createKeyPair(type=TYPE_RSA, bits=2048):
     pkey = crypto.PKey()
     pkey.generate_key(type, bits)
     return pkey
+
 
 def createCertRequest(pkey, digest="sha256", **name):
     """
@@ -48,14 +50,16 @@ def createCertRequest(pkey, digest="sha256", **name):
     req = crypto.X509Req()
     subj = req.get_subject()
 
-    for (key,value) in name.items():
+    for (key, value) in name.items():
         setattr(subj, key, value)
 
     req.set_pubkey(pkey)
     req.sign(pkey, digest)
     return req
 
-def createCertificate(req, (issuerCert, issuerKey), serial, (notBefore, notAfter), digest="sha256"):
+
+def createCertificate(req, (issuerCert, issuerKey), serial,
+                      (notBefore, notAfter), digest="sha256"):
     """
     Generate a certificate given a certificate request.
 
