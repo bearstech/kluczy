@@ -4,8 +4,8 @@
 # Copyright (C) Jean-Paul Calderone
 # See LICENSE for details.
 
-# This code came from openssl certgen example, with newer parameter, sha1 and
-# 2048 key size.
+# This code came from openssl certgen example, with newer parameter, RSA, sha2
+# and 2048 key size.
 
 """
 Certificate generation module.

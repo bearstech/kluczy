@@ -3,6 +3,10 @@ Kluczy
 
 It means "key" in polish.
 
+Kluczy provides tools to manage SSL certificates.
+
+If you read french, have a look at this [official recommendation](http://www.ssi.gouv.fr/IMG/pdf/SSL_TLS_etat_des_lieux_et_recommandations.pdf)
+
 Install
 -------
 
