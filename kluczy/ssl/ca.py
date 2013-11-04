@@ -41,7 +41,7 @@ class CertificateFactory(object):
                                                      caf.read())
             else:
                 keys = dict([(key.upper(), value) for (key, value) in
-                             self.conf.items('CA')])
+                             self.conf.items('CA') if value is not ""])
                 careq = self.createCertRequest(self.cakey, keys)
                 ttl = self.conf.getint('SSL', 'ttl')
                 digest = self.conf.get('SSL', 'digest')
