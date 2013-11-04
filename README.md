@@ -82,11 +82,14 @@ Features
  * √ Authenticated SMTP using the keyring
  * _ Cascading certificate authority and chaining them
  * _ Revocation list
+ * _ Hook for pushing revocation list
  * _ Pin code for private keys
  * _ Batch sending certificates with GPG mail
  * _ Handling DH param
  * _ RSA, DSA or ECDSA private key
  * _ PEM or DER output format
+ * _ Debian package
+ * _ Web service for requesting SSL certificate authenticated by GPG (the CA server will never see the private key)
 
 Licence
 -------
